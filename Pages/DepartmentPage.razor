@@ -1,0 +1,74 @@
+﻿@page "/DepartmentPage"
+<h3>PersonComponent</h3>
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+            
+            <select @bind="DepartmentID"   class="form-control">
+                   <option value="0">--  Select Item  --</option>
+
+               @foreach (var item in Departments)
+               {
+                   <option value="@item.ID">@item.Name</option>
+               }
+            </select>
+        </div>
+        <div class="col-md-3">
+                <input type="button" @onclick="GetDetails" class="btn btn-primary"  value="Get Data"/>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+  <h2>Striped Rows</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Department_ID</th>
+      </tr>
+    </thead>
+    <tbody>
+          @foreach (var item in studentsAfter)
+         {
+      <tr>
+
+              <td>@item.ID</td>
+              <td>@item.Name</td>
+              <td>@item.Department_ID</td>
+      </tr>
+
+         }
+      
+    </tbody>
+  </table>
+</div>
+
+ 
+
+@code {
+    public int DepartmentID { get; set; }
+    public SampleData sampleData { get; set; }
+    public List<Department> Departments  = new List<Department>();
+    public List<Student> students { get; set; } = new List<Student>();
+    public List<Student> studentsAfter { get; set; } = new List<Student>();
+    public DepartmentPage()
+    {
+        sampleData = new SampleData();
+        Departments = sampleData.GetDepartments();
+        students = sampleData.GetStudents();
+
+    }
+    public void GetDetails()
+    {
+        if(DepartmentID == 0)
+        {
+            studentsAfter = students;
+        }
+        else
+        {
+            studentsAfter = students.Include(x=>x.Departments).Where(p => p.Department_ID == DepartmentID).ToList();
+        }
+    }
+}
